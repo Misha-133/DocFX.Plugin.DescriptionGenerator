@@ -10,7 +10,7 @@
     <PackageTags>DocFX</PackageTags>
     <RepositoryType>GitHub</RepositoryType>
     <RepositoryUrl>https://github.com/Still34/DocFx.Plugin.DescriptionGenerator</RepositoryUrl>
-    <PackageLicenseUrl>https://github.com/Still34/DocFx.Plugin.LastModified/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/Still34/DocFx.Plugin.DescriptionGenerator/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
