@@ -3,9 +3,14 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <Authors>Still Hsu</Authors>
-    <Product>DocFX.Plugin.DescriptionGenerator</Product>
+    <Product>DescriptionGenerator</Product>
     <Description>A post-processor designed for DocFX v2 to generate a metadata description tag for each conceptual article.</Description>
     <Copyright>Still Hsu © 2018</Copyright>
+    <PackageId>DescriptionGenerator</PackageId>
+    <PackageTags>DocFX</PackageTags>
+    <RepositoryType>GitHub</RepositoryType>
+    <RepositoryUrl>https://github.com/Still34/DocFx.Plugin.DescriptionGenerator</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/Still34/DocFx.Plugin.LastModified/blob/master/LICENSE</PackageLicenseUrl>
   </PropertyGroup>
 
   <ItemGroup>
