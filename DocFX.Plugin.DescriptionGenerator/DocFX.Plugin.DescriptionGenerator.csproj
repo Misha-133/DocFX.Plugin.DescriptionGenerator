@@ -11,6 +11,7 @@
     <RepositoryType>GitHub</RepositoryType>
     <RepositoryUrl>https://github.com/Still34/DocFx.Plugin.DescriptionGenerator</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/Still34/DocFx.Plugin.DescriptionGenerator/blob/master/LICENSE</PackageLicenseUrl>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
