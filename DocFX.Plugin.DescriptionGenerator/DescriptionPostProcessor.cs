@@ -97,7 +97,7 @@ namespace DocFX.Plugin.DescriptionGenerator
         /// <returns>
         ///     The modified <see cref="HtmlDocument" />.
         /// </returns>
-        private HtmlDocument AppendDescription(HtmlDocument htmlDoc, string descriptionText)
+        private static HtmlDocument AppendDescription(HtmlDocument htmlDoc, string descriptionText)
         {
             var headerNode = htmlDoc.DocumentNode.SelectSingleNode("//head");
             var metaDescriptionNode = htmlDoc.CreateElement("meta");
@@ -111,12 +111,14 @@ namespace DocFX.Plugin.DescriptionGenerator
         ///     Truncates the specified string.
         /// </summary>
         /// <remarks>
-        ///     This method is fetched from the Humanizer project, which is licensed under the MIT license. Copyright(c)
-        ///     .NET Foundation and Contributors
+        ///     This method truncates the input string.
+        ///
+        ///     This snippet is fetched from the Humanizer project, which is licensed under the MIT license.
+        ///     Copyright(c) .NET Foundation and Contributors
         /// </remarks>
         /// <seealso href="https://github.com/Humanizr/Humanizer/" />
         /// <seealso href="https://github.com/Humanizr/Humanizer/blob/master/LICENSE" />
-        private string Truncate(string value, int length, string truncationString)
+        private static string Truncate(string value, int length, string truncationString)
         {
             if (value == null)
                 return null;
