@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,7 +15,7 @@ using Microsoft.DocAsCode.Plugins;
 namespace DocFX.Plugin.DescriptionGenerator
 {
     [Export(nameof(DescriptionPostProcessor), typeof(IPostProcessor))]
-    public class DescriptionPostProcessor : IPostProcessor
+    public partial class DescriptionPostProcessor : IPostProcessor
     {
         private const int FixedDescriptionLength = 150;
         private const string FullStopDelimiter = ". ";
@@ -37,9 +40,9 @@ namespace DocFX.Plugin.DescriptionGenerator
                     string sourcePath = Path.Combine(manifest.SourceBasePath, manifestItem.SourceRelativePath);
                     string outputPath = Path.Combine(outputFolder, manifestItemOutputFile.Value.RelativePath);
                     if (manifestItem.DocumentType == "Conceptual")
-                        WriteDescriptionTag(sourcePath, outputPath, ArticleType.Conceptual);
+                        WriteMetadataTag(sourcePath, outputPath, ArticleType.Conceptual);
                     if (manifestItem.DocumentType == "ManagedReference")
-                        WriteDescriptionTag(sourcePath, outputPath, ArticleType.Reference);
+                        WriteMetadataTag(sourcePath, outputPath, ArticleType.Reference);
                 }
             }
 
@@ -53,12 +56,13 @@ namespace DocFX.Plugin.DescriptionGenerator
         /// <param name="sourcePath">The original article path.</param>
         /// <param name="outputPath">The output path.</param>
         /// <param name="type">The type of document.</param>
-        private void WriteDescriptionTag(string sourcePath, string outputPath, ArticleType type)
+        private static void WriteMetadataTag(string sourcePath, string outputPath, ArticleType type)
         {
             Logger.LogVerbose($"Processing metadata from {sourcePath} to {outputPath}...");
             var htmlDoc = new HtmlDocument();
             htmlDoc.Load(outputPath);
             
+            // Write description
             string descriptionText = string.Empty;
             switch (type)
             {
@@ -69,78 +73,35 @@ namespace DocFX.Plugin.DescriptionGenerator
                     int articlePunctuationPos = articleInnerText.IndexOf(FullStopDelimiter, StringComparison.Ordinal);
                     descriptionText = articlePunctuationPos <= FixedDescriptionLength && articlePunctuationPos > 0
                         ? articleInnerText.Remove(articlePunctuationPos + FullStopDelimiter.Length).Trim()
-                        : Truncate(articleInnerText, FixedDescriptionLength, "...");
+                        : articleInnerText.Truncate(FixedDescriptionLength, "...");
                     break;
                 case ArticleType.Reference:
-                    var sb = new StringBuilder();
-
-                    var memberName = htmlDoc.DocumentNode.SelectSingleNode("//article[@id='_content']/h1")?.InnerText;
-                    if (!string.IsNullOrEmpty(memberName)) sb.Append(memberName.Trim());
-
                     var memberDescription = htmlDoc.DocumentNode.SelectSingleNode("//div[contains(@class, 'level0 summary')]/p")?.InnerText;
-                    if (!string.IsNullOrEmpty(memberDescription)) sb.Append($" {char.ToLowerInvariant(memberDescription[0]) + memberDescription.Substring(1)}");
-
-                    descriptionText = sb.ToString();
+                    if (!string.IsNullOrEmpty(memberDescription)) descriptionText = memberDescription;
                     break;
             }
 
-            if (string.IsNullOrEmpty(descriptionText)) return;
-            AppendDescription(htmlDoc, descriptionText).Save(outputPath);
-            _savedFiles++;
+            if (!string.IsNullOrEmpty(descriptionText))
+                AppendMetadata(htmlDoc, descriptionText).Save(outputPath);
         }
 
         /// <summary>
         ///     Appends the description text into the meta tag of the document.
         /// </summary>
         /// <param name="htmlDoc">The document to be modified.</param>
-        /// <param name="descriptionText">The text to append.</param>
+        /// <param name="type">The type of metadata to inject.</param>
+        /// <param name="value">The text to append.</param>
         /// <returns>
-        ///     The modified <see cref="HtmlDocument" />.
+        ///     The modified <see cref="HtmlDocument"/>.
         /// </returns>
-        private static HtmlDocument AppendDescription(HtmlDocument htmlDoc, string descriptionText)
+        private static HtmlDocument AppendMetadata(HtmlDocument htmlDoc, string value)
         {
             var headerNode = htmlDoc.DocumentNode.SelectSingleNode("//head");
             var metaDescriptionNode = htmlDoc.CreateElement("meta");
             metaDescriptionNode.SetAttributeValue("name", "description");
-            metaDescriptionNode.SetAttributeValue("content", descriptionText);
+            metaDescriptionNode.SetAttributeValue("content", value);
             headerNode.AppendChild(metaDescriptionNode);
             return htmlDoc;
         }
-
-        /// <summary>
-        ///     Truncates the specified string.
-        /// </summary>
-        /// <remarks>
-        ///     This method truncates the input string.
-        ///
-        ///     This snippet is fetched from the Humanizer project, which is licensed under the MIT license.
-        ///     Copyright(c) .NET Foundation and Contributors
-        /// </remarks>
-        /// <seealso href="https://github.com/Humanizr/Humanizer/" />
-        /// <seealso href="https://github.com/Humanizr/Humanizer/blob/master/LICENSE" />
-        private static string Truncate(string value, int length, string truncationString)
-        {
-            if (value == null)
-                return null;
-
-            if (value.Length == 0)
-                return value;
-
-            if (truncationString == null || truncationString.Length > length)
-                return value.Substring(0, length);
-
-            return value.Length > length
-                ? value.Substring(0, length - truncationString.Length) + truncationString
-                : value;
-        }
-    }
-
-    /// <summary>
-    ///     Defines the type of article.
-    /// </summary>
-    internal enum ArticleType
-    {
-        Conceptual,
-        Reference
     }
 }
