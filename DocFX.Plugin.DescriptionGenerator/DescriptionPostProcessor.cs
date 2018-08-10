@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Composition;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using HtmlAgilityPack;
 using Microsoft.DocAsCode.Common;
 using Microsoft.DocAsCode.Plugins;
@@ -15,7 +11,7 @@ using Microsoft.DocAsCode.Plugins;
 namespace DocFX.Plugin.DescriptionGenerator
 {
     [Export(nameof(DescriptionPostProcessor), typeof(IPostProcessor))]
-    public partial class DescriptionPostProcessor : IPostProcessor
+    public class DescriptionPostProcessor : IPostProcessor
     {
         private const int FixedDescriptionLength = 150;
         private const string FullStopDelimiter = ". ";
@@ -56,7 +52,7 @@ namespace DocFX.Plugin.DescriptionGenerator
         /// <param name="sourcePath">The original article path.</param>
         /// <param name="outputPath">The output path.</param>
         /// <param name="type">The type of document.</param>
-        private static void WriteMetadataTag(string sourcePath, string outputPath, ArticleType type)
+        private void WriteMetadataTag(string sourcePath, string outputPath, ArticleType type)
         {
             Logger.LogVerbose($"Processing metadata from {sourcePath} to {outputPath}...");
             var htmlDoc = new HtmlDocument();
@@ -82,7 +78,10 @@ namespace DocFX.Plugin.DescriptionGenerator
             }
 
             if (!string.IsNullOrEmpty(descriptionText))
+            {
                 AppendMetadata(htmlDoc, descriptionText).Save(outputPath);
+                _savedFiles++;
+            }
         }
 
         /// <summary>
