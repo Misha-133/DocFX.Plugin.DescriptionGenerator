@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
@@ -11,7 +11,7 @@
     <RepositoryType>GitHub</RepositoryType>
     <RepositoryUrl>https://github.com/Still34/DocFx.Plugin.DescriptionGenerator</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/Still34/DocFx.Plugin.DescriptionGenerator/blob/master/LICENSE</PackageLicenseUrl>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
