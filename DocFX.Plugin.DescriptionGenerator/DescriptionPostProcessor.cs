@@ -105,7 +105,7 @@ namespace DocFX.Plugin.DescriptionGenerator
         {
             var headerNode = htmlDoc.DocumentNode.SelectSingleNode("//head");
             var metaDescriptionNode = htmlDoc.CreateElement("meta");
-            metaDescriptionNode.SetAttributeValue("name", "description");
+            metaDescriptionNode.SetAttributeValue("property", "og:description");
             metaDescriptionNode.SetAttributeValue("content", value);
             headerNode.AppendChild(metaDescriptionNode);
             return htmlDoc;
