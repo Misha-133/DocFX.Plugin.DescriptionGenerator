@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Immutable;
-using System.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
-using Microsoft.DocAsCode.Common;
-using Microsoft.DocAsCode.Plugins;
+using Docfx.Common;
+using Docfx.Plugins;
+using System.Composition;
 
-namespace DocFX.Plugin.DescriptionGenerator
+namespace Docfx.Plugin.DescriptionGenerator
 {
     [Export(nameof(DescriptionPostProcessor), typeof(IPostProcessor))]
     public class DescriptionPostProcessor : IPostProcessor
@@ -33,15 +33,15 @@ namespace DocFX.Plugin.DescriptionGenerator
                 return Task.Run(() =>
                 {
                     Logger.LogVerbose(
-                        $"Document type for {manifestItem.SourceRelativePath} is {manifestItem.DocumentType}.");
-                    foreach (var manifestItemOutputFile in manifestItem.OutputFiles.Where(x =>
+                        $"Document type for {manifestItem.SourceRelativePath} is {manifestItem.Type}.");
+                    foreach (var manifestItemOutputFile in manifestItem.Output.Where(x =>
                         !string.IsNullOrEmpty(x.Value.RelativePath)))
                     {
                         var sourcePath = Path.Combine(manifest.SourceBasePath, manifestItem.SourceRelativePath);
                         var outputPath = Path.Combine(outputFolder, manifestItemOutputFile.Value.RelativePath);
-                        if (manifestItem.DocumentType == "Conceptual")
+                        if (manifestItem.Type == "Conceptual")
                             WriteMetadataTag(sourcePath, outputPath, ArticleType.Conceptual);
-                        if (manifestItem.DocumentType == "ManagedReference")
+                        if (manifestItem.Type == "ManagedReference")
                             WriteMetadataTag(sourcePath, outputPath, ArticleType.Reference);
                     }
                 });

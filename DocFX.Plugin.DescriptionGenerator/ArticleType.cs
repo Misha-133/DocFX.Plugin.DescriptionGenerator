@@ -1,11 +1,10 @@
-﻿namespace DocFX.Plugin.DescriptionGenerator
+﻿namespace Docfx.Plugin.DescriptionGenerator;
+
+/// <summary>
+///     Defines the type of article.
+/// </summary>
+internal enum ArticleType
 {
-    /// <summary>
-    ///     Defines the type of article.
-    /// </summary>
-    internal enum ArticleType
-    {
-        Conceptual,
-        Reference
-    }
+    Conceptual,
+    Reference
 }
