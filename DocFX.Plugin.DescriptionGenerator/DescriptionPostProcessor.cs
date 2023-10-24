@@ -71,7 +71,7 @@ public class DescriptionPostProcessor : IPostProcessor
         {
             case ArticleType.Conceptual:
                 var articleInnerText =
-                    htmlDoc.DocumentNode.SelectSingleNode("//article[@id='_content']/p")?.InnerText;
+                    htmlDoc.DocumentNode.SelectSingleNode("//article/p")?.InnerText;
                 if (string.IsNullOrEmpty(articleInnerText)) return;
 
                 var articlePunctuationPos = articleInnerText.IndexOf(FullStopDelimiter, StringComparison.Ordinal);
@@ -81,7 +81,7 @@ public class DescriptionPostProcessor : IPostProcessor
                 break;
             case ArticleType.Reference:
                 var memberDescription = htmlDoc.DocumentNode
-                    .SelectSingleNode("//div[contains(@class, 'level0 summary')]/p")?.InnerText;
+                    .SelectSingleNode("//div[contains(@class, 'markdown summary')]/p")?.InnerText;
                 if (!string.IsNullOrEmpty(memberDescription)) descriptionText = memberDescription;
                 break;
         }
