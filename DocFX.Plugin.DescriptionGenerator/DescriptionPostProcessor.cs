@@ -71,8 +71,9 @@ public class DescriptionPostProcessor : IPostProcessor
         {
             case ArticleType.Conceptual:
                 var articleInnerText =
-                    htmlDoc.DocumentNode.SelectSingleNode("//article/p")?.InnerText;
-                if (string.IsNullOrEmpty(articleInnerText)) return;
+                    htmlDoc.DocumentNode.SelectSingleNode("//article /p")?.InnerText;
+                if (string.IsNullOrEmpty(articleInnerText))
+                    return;
 
                 var articlePunctuationPos = articleInnerText.IndexOf(FullStopDelimiter, StringComparison.Ordinal);
                 descriptionText = articlePunctuationPos <= FixedDescriptionLength && articlePunctuationPos > 0
@@ -82,15 +83,25 @@ public class DescriptionPostProcessor : IPostProcessor
             case ArticleType.Reference:
                 var memberDescription = htmlDoc.DocumentNode
                     .SelectSingleNode("//div[contains(@class, 'markdown summary')]/p")?.InnerText;
-                if (!string.IsNullOrEmpty(memberDescription)) descriptionText = memberDescription;
+                if (!string.IsNullOrEmpty(memberDescription))
+                    descriptionText = memberDescription;
                 break;
         }
 
+        var titleText = htmlDoc.DocumentNode.SelectSingleNode("//head/title")?.InnerText;
+
         if (!string.IsNullOrEmpty(descriptionText))
         {
-            AppendMetadata(htmlDoc, descriptionText).Save(outputPath);
-            _savedFiles++;
+            htmlDoc = AppendDescriptionMetadata(htmlDoc, descriptionText);
         }
+
+        if (!string.IsNullOrEmpty(titleText))
+            htmlDoc = AppendTitleMetadata(htmlDoc, descriptionText);
+        AppendSiteNameMetadata(htmlDoc, "Discord.Net Docs");
+        AppendThemeColorMetadata(htmlDoc, "#995EA7");
+        AppendImageMetadata(htmlDoc, "https://raw.githubusercontent.com/Discord-Net/Discord.Net/dev/docs/marketing/logo/PackageLogo.png");
+        htmlDoc.Save(outputPath);
+        _savedFiles++;
     }
 
     /// <summary>
@@ -101,11 +112,51 @@ public class DescriptionPostProcessor : IPostProcessor
     /// <returns>
     ///     The modified <see cref="HtmlDocument" /> .
     /// </returns>
-    private static HtmlDocument AppendMetadata(HtmlDocument htmlDoc, string value)
+    private static HtmlDocument AppendDescriptionMetadata(HtmlDocument htmlDoc, string value)
     {
         var headerNode = htmlDoc.DocumentNode.SelectSingleNode("//head");
         var metaDescriptionNode = htmlDoc.CreateElement("meta");
         metaDescriptionNode.SetAttributeValue("property", "og:description");
+        metaDescriptionNode.SetAttributeValue("content", value);
+        headerNode.AppendChild(metaDescriptionNode);
+        return htmlDoc;
+    }
+
+    private static HtmlDocument AppendTitleMetadata(HtmlDocument htmlDoc, string value)
+    {
+        var headerNode = htmlDoc.DocumentNode.SelectSingleNode("//head");
+        var metaDescriptionNode = htmlDoc.CreateElement("meta");
+        metaDescriptionNode.SetAttributeValue("property", "og:title");
+        metaDescriptionNode.SetAttributeValue("content", value);
+        headerNode.AppendChild(metaDescriptionNode);
+        return htmlDoc;
+    }
+
+    private static HtmlDocument AppendSiteNameMetadata(HtmlDocument htmlDoc, string value)
+    {
+        var headerNode = htmlDoc.DocumentNode.SelectSingleNode("//head");
+        var metaDescriptionNode = htmlDoc.CreateElement("meta");
+        metaDescriptionNode.SetAttributeValue("property", "og:site_name");
+        metaDescriptionNode.SetAttributeValue("content", value);
+        headerNode.AppendChild(metaDescriptionNode);
+        return htmlDoc;
+    }
+
+    private static HtmlDocument AppendImageMetadata(HtmlDocument htmlDoc, string value)
+    {
+        var headerNode = htmlDoc.DocumentNode.SelectSingleNode("//head");
+        var metaDescriptionNode = htmlDoc.CreateElement("meta");
+        metaDescriptionNode.SetAttributeValue("property", "og:image");
+        metaDescriptionNode.SetAttributeValue("content", value);
+        headerNode.AppendChild(metaDescriptionNode);
+        return htmlDoc;
+    }
+
+    private static HtmlDocument AppendThemeColorMetadata(HtmlDocument htmlDoc, string value)
+    {
+        var headerNode = htmlDoc.DocumentNode.SelectSingleNode("//head");
+        var metaDescriptionNode = htmlDoc.CreateElement("meta");
+        metaDescriptionNode.SetAttributeValue("name", "theme-color");
         metaDescriptionNode.SetAttributeValue("content", value);
         headerNode.AppendChild(metaDescriptionNode);
         return htmlDoc;
