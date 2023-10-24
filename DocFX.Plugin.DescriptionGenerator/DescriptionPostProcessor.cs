@@ -73,7 +73,7 @@ public class DescriptionPostProcessor : IPostProcessor
                 var articleInnerText =
                     htmlDoc.DocumentNode.SelectSingleNode("//article /p")?.InnerText;
                 if (string.IsNullOrEmpty(articleInnerText))
-                    return;
+                    break;
 
                 var articlePunctuationPos = articleInnerText.IndexOf(FullStopDelimiter, StringComparison.Ordinal);
                 descriptionText = articlePunctuationPos <= FixedDescriptionLength && articlePunctuationPos > 0
