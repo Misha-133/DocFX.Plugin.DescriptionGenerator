@@ -96,7 +96,7 @@ public class DescriptionPostProcessor : IPostProcessor
         }
 
         if (!string.IsNullOrEmpty(titleText))
-            htmlDoc = AppendTitleMetadata(htmlDoc, descriptionText);
+            htmlDoc = AppendTitleMetadata(htmlDoc, titleText);
         AppendSiteNameMetadata(htmlDoc, "Discord.Net Docs");
         AppendThemeColorMetadata(htmlDoc, "#995EA7");
         AppendImageMetadata(htmlDoc, "https://raw.githubusercontent.com/Discord-Net/Discord.Net/dev/docs/marketing/logo/PackageLogo.png");
