@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Authors>Still Hsu</Authors>
     <Product>DescriptionGenerator</Product>
     <Description>A post-processor designed for DocFX v2 to generate a metadata description tag for each conceptual article.</Description>
@@ -15,10 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Docfx.Common" Version="2.72.0" />
-    <PackageReference Include="Docfx.Plugins" Version="2.72.0" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.54" />
-    <PackageReference Include="System.Composition.AttributedModel" Version="7.0.0" />
-    <PackageReference Include="System.Composition.Runtime" Version="7.0.0" />
+    <PackageReference Include="Docfx.Common" Version="2.75.2" />
+    <PackageReference Include="Docfx.Plugins" Version="2.75.2" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.58" />
+    <PackageReference Include="System.Composition.AttributedModel" Version="8.0.0" />
+    <PackageReference Include="System.Composition.Runtime" Version="8.0.0" />
   </ItemGroup>
 </Project>
