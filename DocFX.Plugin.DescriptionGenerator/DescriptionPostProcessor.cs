@@ -8,6 +8,7 @@ using HtmlAgilityPack;
 using Docfx.Common;
 using Docfx.Plugins;
 using System.Composition;
+using System.Threading;
 
 namespace Docfx.Plugin.DescriptionGenerator;
 
@@ -21,12 +22,13 @@ public class DescriptionPostProcessor : IPostProcessor
     public ImmutableDictionary<string, object> PrepareMetadata(ImmutableDictionary<string, object> metadata)
         => metadata;
 
-    public Manifest Process(Manifest manifest, string outputFolder)
+    public Manifest Process(Manifest manifest, string outputFolder, CancellationToken token)
     {
         var versionInfo = Assembly.GetExecutingAssembly()
                               .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
                               ?.InformationalVersion ??
-                          Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                          Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+
         Logger.LogInfo($"Version: {versionInfo}");
         var taskQueue = manifest.Files.Where(x => !string.IsNullOrEmpty(x.SourceRelativePath)).Select(manifestItem =>
         {
@@ -44,10 +46,10 @@ public class DescriptionPostProcessor : IPostProcessor
                     if (manifestItem.Type == "ManagedReference")
                         WriteMetadataTag(sourcePath, outputPath, ArticleType.Reference);
                 }
-            });
+            }, token);
         }).ToArray();
 
-        Task.WaitAll(taskQueue);
+        Task.WaitAll(taskQueue, token);
 
         Logger.LogInfo($"Added description tags to {_savedFiles} items.");
         return manifest;
